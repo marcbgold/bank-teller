@@ -38,7 +38,7 @@ public class BankAccount {
 
 	@Override
 	public String toString() {
-		return (accountNum + ": " + type);
+		return ("#" + accountNum + ": " + type);
 	}
 
 }
