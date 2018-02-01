@@ -1,5 +1,6 @@
 package bankteller;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -14,12 +15,16 @@ public class Bank {
 
 	private Map<String, BankAccount> accounts = new HashMap<String, BankAccount>();
 
-	public void createAccount(String accountNum, String name, double startingBalance) {
+	public void createAccount(String accountNum, String name, String startingBalance) {
 		accounts.put(accountNum, new BankAccount(accountNum, name, startingBalance));
 	}
 
 	public boolean isEmpty() {
 		return accounts.isEmpty();
+	}
+
+	public int getNumberOfOpenAccounts() {
+		return accounts.size();
 	}
 
 	public void displayAccountInfo(String accountNum) {
@@ -42,26 +47,19 @@ public class Bank {
 		return accounts.containsKey(accountNum);
 	}
 
-	public double getBalance(String accountNum) {
+	public BigDecimal getBalance(String accountNum) {
 		return accounts.get(accountNum).getBalance();
 	}
 
-	public void makeDeposit(String accountNum, double amount) {
+	public void makeDeposit(String accountNum, String amount) {
 		accounts.get(accountNum).makeDeposit(amount);
-		System.out.println(currencyFormatter.format(amount) + " successfully deposited.");
-		System.out.println("Press enter to continue.");
-		input.nextLine();
 	}
 
-	public void makeWithdrawal(String accountNum, double amount) {
+	public boolean makeWithdrawal(String accountNum, String amount) {
 		if (!accounts.get(accountNum).makeWithdrawal(amount)) {
-			System.out.println("Insufficient funds, cannot withdraw that amount.  Please try again.");
-			System.out.println("Press enter to continue.");
-			input.nextLine();
+			return false;
 		} else {
-			System.out.println(currencyFormatter.format(amount) + " successfully withdrawn.");
-			System.out.println("Press enter to continue.");
-			input.nextLine();
+			return true;
 		}
 	}
 

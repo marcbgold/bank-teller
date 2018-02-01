@@ -1,36 +1,47 @@
 package bankteller;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
+import java.math.BigDecimal;
+
+import org.junit.Before;
 import org.junit.Test;
 
 public class BankAccountTest {
 
+	private static final String ACCOUNT_NUM = "111";
+	private static final String TYPE = "checking";
+	private static final String BALANCE = "1000.00";
+	private static final String SMALL_AMOUNT = "100.00";
+	private BankAccount underTest;
+
+	@Before
+	public void setup() {
+		underTest = new BankAccount(ACCOUNT_NUM, TYPE, BALANCE);
+	}
+
 	@Test
 	public void shouldDepositToAccount() {
-		BankAccount underTest = new BankAccount("111", "checking", 1000);
-		underTest.makeDeposit(100);
+		underTest.makeDeposit(SMALL_AMOUNT);
 
-		double amount = underTest.getBalance();
+		BigDecimal amount = underTest.getBalance();
 
-		assertEquals(1100, amount, 0.001);
+		assertThat(amount, is(new BigDecimal("1100.00")));
 	}
 
 	@Test
 	public void shouldWithdrawFromAccount() {
-		BankAccount underTest = new BankAccount("111", "checking", 1000);
-		underTest.makeWithdrawal(100);
+		underTest.makeWithdrawal(SMALL_AMOUNT);
 
-		double amount = underTest.getBalance();
+		BigDecimal amount = underTest.getBalance();
 
-		assertEquals(900, amount, 0.001);
+		assertThat(amount, is(new BigDecimal("900.00")));
 	}
 
 	@Test
 	public void shouldNotOverdrawAccount() {
-		BankAccount underTest = new BankAccount("111", "checking", 1000);
-
-		assertEquals(false, underTest.makeWithdrawal(2000));
+		assertThat(underTest.makeWithdrawal("2000.00"), is(false));
 	}
 
 }

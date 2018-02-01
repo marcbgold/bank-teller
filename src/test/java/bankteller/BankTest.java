@@ -1,50 +1,58 @@
 package bankteller;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
+import java.math.BigDecimal;
+
+import org.junit.Before;
 import org.junit.Test;
 
 public class BankTest {
 
+	static final String ACCOUNT_NUM = "111";
+	static final String TYPE = "checking";
+	static final String BALANCE = "1000.00";
+	static final String SMALL_AMOUNT = "100.00";
+	private Bank underTest;
+
+	@Before
+	public void setup() {
+		underTest = new Bank();
+		underTest.createAccount(ACCOUNT_NUM, TYPE, BALANCE);
+	}
+
 	@Test
 	public void shouldCreateNewAccount() {
-		Bank underTest = new Bank();
-		underTest.createAccount("111", "checking", 1000);
+		BigDecimal amount = underTest.getBalance(ACCOUNT_NUM);
 
-		double amount = underTest.getBalance("111");
-
-		assertEquals(1000, amount, 0.001);
+		assertThat(amount, is(new BigDecimal(BALANCE)));
 	}
 
 	@Test
 	public void shouldDepositToAccount() {
-		Bank underTest = new Bank();
-		underTest.createAccount("111", "checking", 1000);
-		underTest.makeDeposit("111", 100);
+		underTest.makeDeposit(ACCOUNT_NUM, SMALL_AMOUNT);
 
-		double amount = underTest.getBalance("111");
+		BigDecimal amount = underTest.getBalance(ACCOUNT_NUM);
 
-		assertEquals(1100, amount, 0.001);
+		assertThat(amount, is(new BigDecimal("1100.00")));
 	}
 
 	@Test
 	public void shouldWithdrawFromAccount() {
-		Bank underTest = new Bank();
-		underTest.createAccount("111", "checking", 1000);
-		underTest.makeWithdrawal("111", 100);
+		underTest.makeWithdrawal(ACCOUNT_NUM, SMALL_AMOUNT);
 
-		double amount = underTest.getBalance("111");
+		BigDecimal amount = underTest.getBalance(ACCOUNT_NUM);
 
-		assertEquals(900, amount, 0.001);
+		assertThat(amount, is(new BigDecimal("900.00")));
+
 	}
 
 	@Test
 	public void shouldCloseAccount() {
-		Bank underTest = new Bank();
-		underTest.createAccount("111", "checking", 1000);
-		underTest.closeAccount("111");
+		underTest.closeAccount(ACCOUNT_NUM);
 
-		assertEquals(false, underTest.checkIfAccountExists("111"));
+		assertThat(underTest.checkIfAccountExists(ACCOUNT_NUM), is(false));
 	}
 
 }
